@@ -6,9 +6,9 @@
   "scripts": {
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "create-oneledger": "graph create moonba-co/dex-subgraph-oneledger --node https://mainnet-graph.oneledger.network/rpc/",
-    "remove-oneledger": "graph remove moonba-co/dex-subgraph-oneledger --node https://mainnet-graph.oneledger.network/rpc/",
-    "deploy-oneledger": "graph deploy moonba-co/dex-subgraph-oneledger --debug --ipfs https://mainnet-graph.oneledger.network/ipfs/ --node https://mainnet-graph.oneledger.network/rpc/"
+    "create-oneledger": "graph create moonba-co/dex-subgraph-oneledger --node https://frankenstein-graph.oneledger.network/rpc/",
+    "remove-oneledger": "graph remove moonba-co/dex-subgraph-oneledger --node https://frankenstein-graph.oneledger.network/rpc/",
+    "deploy-oneledger": "graph deploy moonba-co/dex-subgraph-oneledger --debug --ipfs https://frankenstein-graph.oneledger.network/ipfs/ --node https://frankenstein-graph.oneledger.network/rpc/"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.16.0",

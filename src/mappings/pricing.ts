@@ -3,25 +3,15 @@ import { Pair, Token, Bundle } from '../types/schema'
 import { BigDecimal, Address, BigInt } from '@graphprotocol/graph-ts/index'
 import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, UNTRACKED_PAIRS } from './helpers'
 
-const WOLT_ADDRESS = '0x01586239b56ca158f1e31e4c6a07b3ae59d623b5'
-const USDT_WOLT_PAIR = '0x191a651a40535ca971034dabe26b5a55457b112f' // created block 2443398
-const BUSD_WOLT_PAIR = '0x1bd7ba696ebd923f4654e30f2b10b62a50fe97fd' // created block 2503202
+const WOLT_ADDRESS = '0x48e821241b953f110e295fd660bd9bf988212b4e'
+const USDT_WOLT_PAIR = '0x448a21d2cf7b914c0b596dba23613e1f4b674b38' // created block 2443398
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let usdtPair = Pair.load(USDT_WOLT_PAIR) // usdt is token1
-  let busdPair = Pair.load(BUSD_WOLT_PAIR) // busd is token1
 
-  if (usdtPair !== null && busdPair !== null) {
-    let totalLiquidityOLT = busdPair.reserve1.plus(usdtPair.reserve1)
-    let busdWeight = busdPair.reserve1.div(totalLiquidityOLT)
-    let usdtWeight = usdtPair.reserve1.div(totalLiquidityOLT)
-    return busdPair.token1Price.times(busdWeight)
-      .plus(usdtPair.token1Price.times(usdtWeight))
-  } else if (usdtPair !== null) {
+  if (usdtPair !== null) {
     return usdtPair.token1Price
-  } else if (busdPair !== null) {
-    return busdPair.token1Price
   } else {
     return ZERO_BD
   }
@@ -29,18 +19,17 @@ export function getEthPriceInUSD(): BigDecimal {
 
 // token where amounts should contribute to tracked volume and liquidity
 let WHITELIST: string[] = [
-  '0x01586239b56ca158f1e31e4c6a07b3ae59d623b5', // WOLT
-  '0x8df7da2df8d5471e29001b16d8981d641615c978', // BNB
-  '0xa2a899f4b27b2bfa98f5c41a1c1f300af652799c', // BUSD
-  '0xed344b7c2ded6143e32b03ea905e59dc2010ce74', // USDT
-  '0xa04ec6d466ae7d40b4c92ce93c208752a35f3d7a', // XDB
+  '0x48e821241b953f110e295fd660bd9bf988212b4e', // WOLT
+  '0xe2c65fa9bb8af93d16c01ad3bb494cf81c647c18', // ETH
+  '0x4e5e005c548287465665e09290734541902a4979', // BUSD
+  '0x5141e37bee838dde7bcad93f8209e0b65b36b46c', // USDT
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
-let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('100')
+let MINIMUM_USD_THRESHOLD_NEW_PAIRS = BigDecimal.fromString('10')
 
 // minimum liquidity for price to get tracked
-let MINIMUM_LIQUIDITY_THRESHOLD_OLT = BigDecimal.fromString('5000')
+let MINIMUM_LIQUIDITY_THRESHOLD_OLT = BigDecimal.fromString('1')
 
 /**
  * Search through graph to find derived Eth per token.
@@ -90,26 +79,26 @@ export function getTrackedVolumeUSD(
     return ZERO_BD
   }
 
-  // if less than 5 LPs, require high minimum reserve amount amount or return 0
-  if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
-    let reserve0USD = pair.reserve0.times(price0)
-    let reserve1USD = pair.reserve1.times(price1)
-    if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-      if (reserve0USD.plus(reserve1USD).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-        return ZERO_BD
-      }
-    }
-    if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
-      if (reserve0USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-        return ZERO_BD
-      }
-    }
-    if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
-      if (reserve1USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
-        return ZERO_BD
-      }
-    }
-  }
+  // // if less than 5 LPs, require high minimum reserve amount amount or return 0
+  // if (pair.liquidityProviderCount.lt(BigInt.fromI32(5))) {
+  //   let reserve0USD = pair.reserve0.times(price0)
+  //   let reserve1USD = pair.reserve1.times(price1)
+  //   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
+  //     if (reserve0USD.plus(reserve1USD).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+  //       return ZERO_BD
+  //     }
+  //   }
+  //   if (WHITELIST.includes(token0.id) && !WHITELIST.includes(token1.id)) {
+  //     if (reserve0USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+  //       return ZERO_BD
+  //     }
+  //   }
+  //   if (!WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {
+  //     if (reserve1USD.times(BigDecimal.fromString('2')).lt(MINIMUM_USD_THRESHOLD_NEW_PAIRS)) {
+  //       return ZERO_BD
+  //     }
+  //   }
+  // }
 
   // both are whitelist tokens, take average of both amounts
   if (WHITELIST.includes(token0.id) && WHITELIST.includes(token1.id)) {

@@ -6,11 +6,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: oneledger
+    network: frankenstein
     source:
-      address: '0xf043718b9a753C88cd73245A39dC11Ae034B0946'
+      address: '0xB4272b228bc4235d79cfa0Fd1740dd62a9DE08D8'
       abi: Factory
-      startBlock: 2443605
+      startBlock: 387829
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.3
@@ -34,7 +34,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: Pair
-    network: oneledger
+    network: frankenstein
     source:
       abi: Pair
     mapping:
