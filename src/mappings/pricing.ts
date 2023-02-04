@@ -34,6 +34,7 @@ let WHITELIST: string[] = [
   '0xa2a899f4b27b2bfa98f5c41a1c1f300af652799c', // BUSD
   '0xed344b7c2ded6143e32b03ea905e59dc2010ce74', // USDT
   '0xa04ec6d466ae7d40b4c92ce93c208752a35f3d7a', // XDB
+  '0x7599108f62df4e3054ce438e0c4e16856339cf6c', // USDC
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
