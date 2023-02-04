@@ -6,22 +6,28 @@ import { ZERO_BD, factoryContract, ADDRESS_ZERO, ONE_BD, UNTRACKED_PAIRS } from 
 const WOLT_ADDRESS = '0x01586239b56ca158f1e31e4c6a07b3ae59d623b5'
 const USDT_WOLT_PAIR = '0x191a651a40535ca971034dabe26b5a55457b112f' // created block 2443398
 const BUSD_WOLT_PAIR = '0x1bd7ba696ebd923f4654e30f2b10b62a50fe97fd' // created block 2503202
+const USDC_WOLT_PAIR = '0x5bdd2b8d2da32a345751581d4da39dd5f1f5e2d0' // created block 4113862
 
 export function getEthPriceInUSD(): BigDecimal {
   // fetch eth prices for each stablecoin
   let usdtPair = Pair.load(USDT_WOLT_PAIR) // usdt is token1
   let busdPair = Pair.load(BUSD_WOLT_PAIR) // busd is token1
+  let usdcPair = Pair.load(USDC_WOLT_PAIR) // usdc is token1
 
-  if (usdtPair !== null && busdPair !== null) {
-    let totalLiquidityOLT = busdPair.reserve1.plus(usdtPair.reserve1)
+  if (usdtPair !== null && busdPair !== null && usdcPair !== null) {
+    let totalLiquidityOLT = busdPair.reserve1.plus(usdtPair.reserve1).plus(usdcPair.reserve1)
     let busdWeight = busdPair.reserve1.div(totalLiquidityOLT)
     let usdtWeight = usdtPair.reserve1.div(totalLiquidityOLT)
+    let usdcWeight = usdcPair.reserve1.div(totalLiquidityOLT)
     return busdPair.token1Price.times(busdWeight)
       .plus(usdtPair.token1Price.times(usdtWeight))
+      .plus(usdcPair.token1Price.times(usdcWeight))
   } else if (usdtPair !== null) {
     return usdtPair.token1Price
   } else if (busdPair !== null) {
     return busdPair.token1Price
+  } else if (usdcPair !== null) {
+    return usdcPair.token1Price
   } else {
     return ZERO_BD
   }
